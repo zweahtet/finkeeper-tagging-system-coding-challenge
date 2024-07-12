@@ -71,7 +71,7 @@ python manage.py migrate
 
 ### 6. Generate dummy data (Optional, but recommended)
 
-Generate 100 dummy posts with 20 random tags for live testing:
+Generate 500 dummy posts with 20 random tags for live testing:
 
 ```bash
 python manage.py generate_dummy_data

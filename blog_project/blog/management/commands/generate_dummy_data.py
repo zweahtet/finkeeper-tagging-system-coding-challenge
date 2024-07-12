@@ -6,7 +6,7 @@ import lorem
 
 
 class Command(BaseCommand):
-    help = "Generates 100 dummy blog posts with random tags"
+    help = "Generates 500 dummy blog posts with random tags"
 
     def handle(self, *args, **kwargs):
         # Create some sample tags
@@ -36,8 +36,8 @@ class Command(BaseCommand):
         for tag_name in tags:
             Tag.objects.get_or_create(name=tag_name)
 
-        # Generate 100 dummy posts
-        for i in range(100):
+        # Generate 500 dummy posts
+        for i in range(500):
             title = f"Blog Post {i+1}: {lorem.sentence()[:50]}"
             content = lorem.paragraph()
             author = f"Author {random.randint(1, 10)}"
@@ -57,5 +57,5 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f"Created post: {title}"))
 
         self.stdout.write(
-            self.style.SUCCESS("Successfully generated 100 dummy blog posts")
+            self.style.SUCCESS("Successfully generated 500 dummy blog posts")
         )
