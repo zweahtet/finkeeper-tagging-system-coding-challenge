@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2>Search Results</h2>
-<form method="get">
+<form method="get" action="{% url 'search_posts' %}">
     <input type="text" name="q" value="{{ query }}" placeholder="Search tags">
     <select name="filter_type">
         <option value="any" {% if filter_type == 'any' %}selected{% endif %}>Any tags</option>
@@ -13,7 +13,6 @@
     </select>
     <button type="submit">Search</button>
 </form>
-
 
 <h3>Popular Tags</h3>
 <div class="popular-tags">
@@ -30,6 +29,7 @@
         <li>
             <h3>{{ post.title }}</h3>
             <p>Author: {{ post.author }}</p>
+            <p>Date: {{ post.date|date:"F d, Y" }}</p>
             <p>Tags: 
                 {% for tag in post.tags.all %}
                     <a href="{% url 'search_posts' %}?q={{ tag.name }}&filter_type=any" class="tag">{{ tag.name }}</a>
@@ -39,6 +39,21 @@
         </li>
     {% endfor %}
     </ul>
+
+    <!-- Pagination controls -->
+    <div class="pagination">
+        {% if has_previous %}
+            <a href="?q={{ query }}&filter_type={{ filter_type }}&page={{ previous_page_number }}">&laquo; Previous</a>
+        {% endif %}
+
+        <span class="current-page">
+            Page {{ current_page }} of {{ total_pages }}
+        </span>
+
+        {% if has_next %}
+            <a href="?q={{ query }}&filter_type={{ filter_type }}&page={{ next_page_number }}">Next &raquo;</a>
+        {% endif %}
+    </div>
 {% else %}
     <p>No posts found.</p>
 {% endif %}
