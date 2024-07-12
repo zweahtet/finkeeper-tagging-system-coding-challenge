@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<h2>Search Results</h2>
+<form method="get">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search tags">
+    <select name="filter_type">
+        <option value="any" {% if filter_type == 'any' %}selected{% endif %}>Any tags</option>
+        <option value="all" {% if filter_type == 'all' %}selected{% endif %}>All tags</option>
+        <option value="specific" {% if filter_type == 'specific' %}selected{% endif %}>Specific combination</option>
+    </select>
+    <button type="submit">Search</button>
+</form>
+
+{% if posts %}
+    <ul>
+    {% for post in posts %}
+        <li>
+            <h3>{{ post.title }}</h3>
+            <p>Tags: {{ post.tags.all|join:", " }}</p>
+            <a href="{% url 'manage_tags' post.id %}">Manage Tags</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No posts found.</p>
+{% endif %}
+{% endblock %}

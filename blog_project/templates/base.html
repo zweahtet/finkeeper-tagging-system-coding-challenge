@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Blog{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; }
+        header { background: #f4f4f4; padding: 1rem; margin-bottom: 1rem; }
+        nav a { margin-right: 10px; }
+        main { max-width: 800px; margin: auto; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Blog</h1>
+        <nav>
+            <a href="{% url 'create_post' %}">Create Post</a>
+            <a href="{% url 'search_posts' %}">Search Posts</a>
+        </nav>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>
