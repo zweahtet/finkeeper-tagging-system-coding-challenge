@@ -12,15 +12,25 @@ class PostForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit=False)
+        author_name = self.cleaned_data.get("author_name")
+        if not author_name:
+            author_name = "Anonymous"
+
+        instance.author = author_name
+
         if commit:
             instance.save()
-            tag_names = [
-                name.strip()
-                for name in self.cleaned_data["tags"].split(",")
-                if name.strip()
-            ]
+            self.save_tags(instance)
 
-            for tag_name in tag_names:
-                tag, created = Tag.objects.get_or_create(name=tag_name.lower())
-                instance.tags.add(tag)
         return instance
+
+    def save_tags(self, instance):
+        tag_names = [
+            name.strip()
+            for name in self.cleaned_data["tags"].split(",")
+            if name.strip()
+        ]
+        instance.tags.clear()  # Remove existing tags
+        for tag_name in tag_names:
+            tag, created = Tag.objects.get_or_create(name=tag_name.lower())
+            instance.tags.add(tag)
