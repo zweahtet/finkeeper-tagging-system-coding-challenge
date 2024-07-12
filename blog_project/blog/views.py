@@ -63,7 +63,7 @@ def search_posts(request):
     View to handle searching for posts based on tags and filter type.
 
     This function retrieves posts based on the search query, filter type, and pagination.
-    It uses caching to store and retrieve search results for efficiency.
+    It uses lazy evaluation to optimize performance.
 
     Args:
         request (HttpRequest): The request object containing query parameters.
@@ -76,20 +76,24 @@ def search_posts(request):
     tags = [tag.strip() for tag in query.split(",")] if query else []
     page = request.GET.get("page", 1)
 
+    # Start with an empty QuerySet
+    # In Django, QuerySets are lazy, meaning no database query is actually executed
+    # until the QuerySet is evaluated (e.g., when you iterate over it, slice it or
+    # call a method like `count()` or exists()`).
+    posts = Post.objects.all()
+
     if tags:
         if filter_type == "all":
-            posts = Post.objects.filter(tags__name__in=tags).distinct()
             for tag in tags:
                 posts = posts.filter(tags__name=tag)
         elif filter_type == "any":
-            posts = Post.objects.filter(tags__name__in=tags).distinct()
+            posts = posts.filter(tags__name__in=tags).distinct()
         elif filter_type == "specific":
-            posts = Post.objects.filter(tags__name__in=tags)
-            posts = posts.annotate(tag_count=Count("tags")).filter(tag_count=len(tags))
-        else:
-            posts = Post.objects.all()
-    else:
-        posts = Post.objects.all()
+            posts = (
+                posts.filter(tags__name__in=tags)
+                .annotate(tag_count=Count("tags"))
+                .filter(tag_count=len(tags))
+            )
 
     # Order posts by date (newest first)
     posts = posts.order_by("-date")
